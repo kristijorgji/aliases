@@ -1,0 +1,35 @@
+gfc() {
+ git add . && git commit -m "$1" --no-verify
+}
+
+gb() {
+ git branch $1 && git checkout $1;
+}
+
+gp() {
+  git pull;
+}
+
+gc() {
+  git checkout $1;
+}
+
+gfcpb() {
+  git add . && git commit -m "$1" --no-verify && git push origin -u "$(getGitBranch)"
+}
+
+gfp() {
+ git push --no-verify
+}
+
+gfpb() {
+ git push --no-verify origin -u "$(getGitBranch)"
+}
+
+gfcp() {
+ gfc "$1" && gfp
+}
+
+getGitBranch() {
+    echo $(git symbolic-ref HEAD | cut -d/ -f3-);
+}
