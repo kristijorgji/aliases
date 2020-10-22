@@ -14,8 +14,12 @@ gc() {
   git checkout $1;
 }
 
+gcm() {
+ git checkout master;
+}
+
 gfcpb() {
-  git add . && git commit -m "$1" --no-verify && git push origin -u "$(getGitBranch)"
+  git add . && git commit -m "$1" --no-verify && git push origin -u "$(getGitBranch)" --no-verify
 }
 
 gfp() {
