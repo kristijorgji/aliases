@@ -3,3 +3,4 @@ script_directory="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 source ${script_directory}/.p;
 source ${script_directory}/.vagrant;
 source ${script_directory}/.git_aliases;
+source ${script_directory}/.kubectl;
