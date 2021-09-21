@@ -6,15 +6,31 @@ gb() {
  git branch $1 && git checkout $1;
 }
 
+gfpr() {
+  git fetch --prune;
+}
+
 gp() {
   git pull;
 }
 
-gc() {
+gac() {
+  git add . && git commit -m "$1";
+}
+
+gacp() {
+  gac "$1" && git push
+}
+
+gacpb() {
+  git add . && git commit -m "$1" && git push origin -u "$(getGitBranch)"
+}
+
+gch() {
   git checkout $1;
 }
 
-gcm() {
+gchm() {
  git checkout master;
 }
 

@@ -4,3 +4,4 @@ source ${script_directory}/.p;
 source ${script_directory}/.vagrant;
 source ${script_directory}/.git_aliases;
 source ${script_directory}/.kubectl;
+source ${script_directory}/.docker_aliases;

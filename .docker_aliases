@@ -1,0 +1,68 @@
+#!/bin/sh
+
+alias dk='docker'
+alias dki='docker images'
+alias dks='docker service'
+alias dkrm='docker rm'
+alias dkl='docker logs'
+alias dklf='docker logs -f'
+alias dkflush='docker rm `docker ps --no-trunc -aq`'
+alias dkflush2='docker rmi $(docker images --filter "dangling=true" -q --no-trunc)'
+alias dkt='docker stats --format "table {{.Name}}\t{{.CPUPerc}}\t{{.MemUsage}}\t{{.NetIO}}"'
+alias dkps="docker ps --format '{{.ID}} ~ {{.Names}} ~ {{.Status}} ~ {{.Image}}'"
+
+alias dcu="docker-compose up"
+alias dcud="docker-compose up -d"
+alias dcd="docker-compose down"
+alias dcr="docker-compose run"
+alias dcst="docker-compose stop"
+alias dce="docker-compose exec"
+alias dcs="docker-compose ps --services"
+alias dcrm="docker-compose rm"
+alias dcre="docker-compose restart"
+alias dcps="docker-compose ps"
+alias dcl="docker-compose logs"
+alias dclf="docker-compose logs -f"
+
+dcrefresh() {
+    dcst $1;
+    dcrm -f $1;
+    dcu --build $1;
+    dcl -f $1;
+}
+
+dkln() {
+  docker logs -f `docker ps | grep $1 | awk '{print $1}'`
+}
+
+dke() {
+  docker exec -it $1 /bin/sh
+}
+
+dkexe() {
+  docker exec -it $1 $2
+}
+
+dkreboot() {
+  osascript -e 'quit app "Docker"'
+  countdown 2
+  open -a Docker
+  echo "Restarting Docker engine"
+  countdown 120
+}
+
+dcip() {
+    docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $1
+}
+
+dcss() {
+    if [ "$1" = "web" ] || [ "$1" = "api" ] || [ "$1" = "payments" ]; then
+      dce -u root "$1"  sh
+    else
+        dce $1 bash;
+    fi
+}
+
+dkstate() {
+  docker inspect $1 | jq .[0].State
+}
