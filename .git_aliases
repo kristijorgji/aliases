@@ -31,7 +31,12 @@ gch() {
 }
 
 gchm() {
- git checkout master;
+  if [ `git branch --list master` ]
+  then
+    git checkout master;
+  else
+    git checkout main;
+  fi
 }
 
 gfcpb() {

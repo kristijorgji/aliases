@@ -56,10 +56,12 @@ dcip() {
 }
 
 dcss() {
-    if [ "$1" = "web" ] || [ "$1" = "api" ] || [ "$1" = "payments" ]; then
-      dce -u root "$1"  sh
+    dce "$1" /bin/bash -c 'true' > /dev/null 2>&1
+    if [ $? -eq 0 ]; then
+      # bash is available use that
+      dce $1 bash;
     else
-        dce $1 bash;
+      dce -u root "$1"  sh
     fi
 }
 
