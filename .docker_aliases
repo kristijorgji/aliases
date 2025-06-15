@@ -11,18 +11,18 @@ alias dkflush2='docker rmi $(docker images --filter "dangling=true" -q --no-trun
 alias dkt='docker stats --format "table {{.Name}}\t{{.CPUPerc}}\t{{.MemUsage}}\t{{.NetIO}}"'
 alias dkps="docker ps --format '{{.ID}} ~ {{.Names}} ~ {{.Status}} ~ {{.Image}}'"
 
-alias dcu="docker-compose up"
-alias dcud="docker-compose up -d"
-alias dcd="docker-compose down"
-alias dcr="docker-compose run"
-alias dcst="docker-compose stop"
-alias dce="docker-compose exec"
-alias dcs="docker-compose ps --services"
-alias dcrm="docker-compose rm"
-alias dcre="docker-compose restart"
-alias dcps="docker-compose ps"
-alias dcl="docker-compose logs"
-alias dclf="docker-compose logs -f"
+alias dcu="docker compose up"
+alias dcud="docker compose up -d"
+alias dcd="docker compose down"
+alias dcr="docker compose run"
+alias dcst="docker compose stop"
+alias dce="docker compose exec"
+alias dcs="docker compose ps --services"
+alias dcrm="docker compose rm"
+alias dcre="docker compose restart"
+alias dcps="docker compose ps"
+alias dcl="docker compose logs"
+alias dclf="docker compose logs -f"
 
 dcrefresh() {
     dcst $1;
