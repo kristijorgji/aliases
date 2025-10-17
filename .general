@@ -1,0 +1,52 @@
+killport() {
+  if [ -z "$1" ]; then
+    echo "Usage: killport <port>"
+    return 1
+  fi
+
+  port="$1"
+  # get PIDs listening on TCP port
+  pids=$(lsof -t -i tcp:"$port" 2>/dev/null)
+
+  if [ -z "$pids" ]; then
+    echo "No processes listening on port ${port}."
+    return 0
+  fi
+
+  echo "Found PIDs on port ${port}: $pids"
+
+  # Try graceful kill first
+  echo "Attempting graceful shutdown (SIGTERM)..."
+  if ! kill $pids 2>/dev/null; then
+    echo "SIGTERM failed (permission?). Trying with sudo..."
+    sudo kill $pids 2>/dev/null || true
+  fi
+
+  # wait up to 5 seconds for processes to exit
+  for i in 1 2 3 4 5; do
+    sleep 1
+    alive=$(lsof -t -i tcp:"$port" 2>/dev/null)
+    if [ -z "$alive" ]; then
+      echo "Processes terminated gracefully."
+      return 0
+    fi
+    echo "Still alive after ${i}s: ${alive}"
+  done
+
+  # Escalate to force kill
+  echo "Graceful shutdown didn't finish. Sending SIGKILL (kill -9)..."
+  if ! kill -9 $pids 2>/dev/null; then
+    echo "SIGKILL failed (permission?). Trying with sudo..."
+    sudo kill -9 $pids 2>/dev/null || true
+  fi
+
+  sleep 1
+  alive=$(lsof -t -i tcp:"$port" 2>/dev/null)
+  if [ -z "$alive" ]; then
+    echo "Processes killed."
+    return 0
+  else
+    echo "Failed to kill PIDs: ${alive}. You may need to investigate further or run with sudo."
+    return 2
+  fi
+}
