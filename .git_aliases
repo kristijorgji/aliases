@@ -1,35 +1,65 @@
+# =============================================================================
+# Git aliases — source this file (e.g. in .bashrc) to use: source /path/to/.git_aliases
+# =============================================================================
+
+# gfc [message...] — Stage all, commit (one or more -m lines), skip hooks (--no-verify). Multi-line: gfc "title" "body line 1" "body line 2"
 gfc() {
- git add . && git commit -m "$1" --no-verify
+  git add .
+  local args=(); for msg in "$@"; do args+=(-m "$msg"); done
+  git commit "${args[@]}" --no-verify
 }
 
+# gb <branch> — Create branch and switch to it
 gb() {
  git branch $1 && git checkout $1;
 }
 
+# gfpr — Fetch from all remotes and prune deleted remote-tracking branches
 gfpr() {
   git fetch --prune;
 }
 
+# gprune-local — Fetch origin (prune), then delete every local branch that has no matching branch on origin (current branch is never deleted)
+gprune-local() {
+  git fetch origin --prune;
+  current=$(git branch --show-current);
+  for branch in $(git for-each-ref --format='%(refname:short)' refs/heads/); do
+    if [ "$branch" != "$current" ] && ! git show-ref --verify --quiet refs/remotes/origin/"$branch"; then
+      git branch -D "$branch";
+    fi;
+  done
+}
+
+# gp — Pull current branch
 gp() {
   git pull;
 }
 
+# gac [message...] — Stage all and commit. Multi-line: gac "title" "body line 1" "body line 2"
 gac() {
-  git add . && git commit -m "$1";
+  git add .
+  local args=(); for msg in "$@"; do args+=(-m "$msg"); done
+  git commit "${args[@]}"
 }
 
+# gacp [message...] — Stage, commit (multi-line ok), then push (uses gac + git push)
 gacp() {
-  gac "$1" && git push
+  gac "$@" && git push
 }
 
+# gacpb [message...] — Stage, commit (multi-line ok), push to origin and set upstream to current branch
 gacpb() {
-  git add . && git commit -m "$1" && git push origin -u "$(getGitBranch)"
+  git add .
+  local args=(); for msg in "$@"; do args+=(-m "$msg"); done
+  git commit "${args[@]}" && git push origin -u "$(getGitBranch)"
 }
 
+# gch <branch> — Checkout branch (or ref)
 gch() {
   git checkout $1;
 }
 
+# gchm — Checkout default branch (master if present, else main)
 gchm() {
   if [ `git branch --list master` ]
   then
@@ -39,22 +69,29 @@ gchm() {
   fi
 }
 
+# gfcpb [message...] — Stage, commit (no-verify, multi-line ok), push to origin with upstream (no-verify)
 gfcpb() {
-  git add . && git commit -m "$1" --no-verify && git push origin -u "$(getGitBranch)" --no-verify
+  git add .
+  local args=(); for msg in "$@"; do args+=(-m "$msg"); done
+  git commit "${args[@]}" --no-verify && git push origin -u "$(getGitBranch)" --no-verify
 }
 
+# gfp — Push current branch, skip hooks
 gfp() {
  git push --no-verify
 }
 
+# gfpb — Push current branch to origin, set upstream, skip hooks
 gfpb() {
  git push --no-verify origin -u "$(getGitBranch)"
 }
 
+# gfcp [message...] — gfc + gfp: stage, commit (no-verify, multi-line ok), then push (no-verify)
 gfcp() {
- gfc "$1" && gfp
+  gfc "$@" && gfp
 }
 
+# getGitBranch — Print current branch name (helper, used by gacpb, gfcpb, gfpb)
 getGitBranch() {
     echo $(git symbolic-ref HEAD | cut -d/ -f3-);
 }
