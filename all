@@ -6,3 +6,9 @@ source ${script_directory}/.vagrant;
 source ${script_directory}/.git_aliases;
 source ${script_directory}/.kubectl;
 source ${script_directory}/.docker_aliases;
+
+optionalFiles=(".tmp")
+for file in "${optionalFiles[@]}"; do
+    path="${script_directory}/${file}"
+    [ -f "$path" ] && source "$path"
+done
